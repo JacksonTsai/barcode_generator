@@ -1,0 +1,40 @@
+.selectBtn {
+  margin-bottom: 16px;
+}
+
+input[type="file"] {
+  display: none;
+}
+.preview-files {
+  box-sizing: border-box;
+  border: 1px solid rgba(#000000, 0.2);
+  border-radius: 8px;
+  width: 420px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  &__name {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  + .preview-files {
+    margin-top: 8px;
+  }
+}
+
+.next_btn {
+  margin-top: 16px;
+}
+
+.barcode-list {
+  display: flex;
+  align-items: center;
+}
+.filename {
+  width: 400px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
