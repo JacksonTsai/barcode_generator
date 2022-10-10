@@ -1,12 +1,8 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import html2canvas from 'html2canvas';
 import * as JsBarcode from 'jsbarcode';
-
-interface PreviewContent {
-  id: string;
-  filename: string;
-  invoiceNO: string;
-  // barcodeObject: { id: string; code: string };
-}
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-root',
@@ -14,58 +10,89 @@ interface PreviewContent {
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  selectedFiles: File[] = [];
-  previewContent: PreviewContent[] = [];
+  selectedFilename: string[] = [];
+  inputInvoice = new FormControl('');
+  @ViewChild('filesInput') filesInput;
+
   @HostListener('change', ['$event.target.files']) emitFiles(event: FileList) {
     if (event) {
-      this.selectedFiles = Array.from(event);
+      Array.from(event).map((d) => {
+        const filename = d.name.split('.')[0];
+        if (this.selectedFilename.includes(filename)) {
+          return;
+        }
+        this.selectedFilename.push(filename);
+      });
+      this.selectedFilename.map((id) => {
+        setTimeout(() => {
+          this.generterBarcode(id);
+        }, 0);
+      });
+      this.filesInput.nativeElement.value = null;
     }
   }
 
-  previewFiles() {
-    this.selectedFiles.map((file) => {
-      this.fileReader(file);
+  clearAll() {
+    this.selectedFilename = [];
+  }
+
+  removeFile(id) {
+    const newFileList = this.selectedFilename.filter((d) => d !== id);
+    this.selectedFilename = newFileList;
+  }
+
+  addinvoice() {
+    if (!this.inputInvoice.value) {
+      return;
+    }
+
+    const inputInvoiceList = this.inputInvoice.value
+      .split(/,|;|\/| |\r?\n/)
+      .filter((d) => d ?? false);
+    const newinputInvoice = inputInvoiceList.filter((d) =>
+      this.selectedFilename.includes(d) ? false : true
+    );
+    this.selectedFilename.push(...newinputInvoice);
+    this.inputInvoice.setValue('');
+    newinputInvoice.map((d) => {
+      setTimeout(() => {
+        this.generterBarcode(d);
+      }, 0);
     });
   }
 
-  removeFile(file) {
-    const newFileList = this.selectedFiles.filter((d) => d.name !== file.name);
-    this.selectedFiles = newFileList;
-  }
-
-  private async fileReader(file: File) {
-    const fileReader = new FileReader();
-    fileReader.onerror = (e) => console.log(`${file.name} load fail(${e})`);
-    fileReader.onload = (d) => {
-      this.fileContext(file.name, d);
-    };
-    await fileReader.readAsText(file);
-  }
-
-  private fileContext = (filename, data) => {
-    const code = this.getInvoiceNO(data.target.result);
-    this.previewContent.push({
-      id: `barcode_${code}`,
-      filename,
-      invoiceNO: code,
-    });
-    setTimeout(() => {
-      this.generterBarcode(`#barcode_${code}`, code);
-    }, 0);
-  };
-
-  private getInvoiceNO(data: string) {
-    const temp = data.split(/: |  /);
-    const invoiceIdx = temp.findIndex((d) => d.includes('INVOICE NO'));
-    return temp[invoiceIdx + 1].trim();
-  }
-
-  generterBarcode(id, code: string) {
-    JsBarcode(id, code, {
+  generterBarcode(id: string) {
+    if (id.length !== 12) {
+      return;
+    }
+    JsBarcode(`#barcode_${id}`, id, {
       lineColor: '#000',
       width: 1,
       height: 40,
       displayValue: true,
+    });
+  }
+
+  formatAMPM() {
+    const date = new Date();
+    const day = date.getDate();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+    var strTime = `${hours}_${minutes}_${seconds}_${day}`;
+    return strTime;
+  }
+
+  export() {
+    let DATA: any = document.getElementById('export-context');
+    html2canvas(DATA).then((canvas) => {
+      let fileWidth = 208;
+      let fileHeight = (canvas.height * fileWidth) / canvas.width;
+      const FILEURI = canvas.toDataURL('image/png');
+      let PDF = new jsPDF('p', 'mm', 'a4');
+      let position = 0;
+      PDF.addImage(FILEURI, 'PNG', 0, position, fileWidth, fileHeight);
+      PDF.save(`${this.formatAMPM()}.pdf`);
     });
   }
 }

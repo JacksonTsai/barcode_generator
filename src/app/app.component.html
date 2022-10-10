@@ -1,52 +1,60 @@
-<mat-stepper linear #stepper>
-  <mat-step>
-    <ng-template matStepLabel>Select File(s)</ng-template>
-    <button class="selectBtn" mat-stroked-button (click)="inputFile.click()">
-      Select file(s)
+<mat-toolbar class="toolbar">
+  <mat-icon> qr_code2 </mat-icon>
+  <h2>條碼產生器</h2>
+</mat-toolbar>
+<div class="wrapper">
+  <div class="action-btn">
+    <button mat-stroked-button (click)="filesInput.click()">Add file(s)</button>
+    <button
+      *ngIf="selectedFilename.length > 0"
+      mat-stroked-button
+      (click)="clearAll()"
+    >
+      Clear All
     </button>
-    <input #inputFile type="file" placeholder="select" multiple="multiple" />
-    <ng-container *ngFor="let file of selectedFiles">
-      <div class="preview-files">
+    <button
+      *ngIf="selectedFilename.length > 0"
+      mat-stroked-button
+      (click)="export()"
+    >
+      Export
+    </button>
+  </div>
+  <div class="input-invoice">
+    <mat-form-field>
+      <mat-label>Input Invoice No.</mat-label>
+      <textarea
+        [formControl]="inputInvoice"
+        matInput
+        placeholder="Ex. ABC123456789"
+      ></textarea>
+    </mat-form-field>
+    <button (click)="addinvoice()" mat-stroked-button>Add</button>
+  </div>
+  <input #filesInput type="file" placeholder="select" multiple="multiple" />
+  <div id="export-context">
+    <div class="barcode-wrapper">
+      <div class="preview-barcode" *ngFor="let filename of selectedFilename">
         <div
-          class="preview-files__name"
-          [matTooltip]="file.name"
-          matTooltipPosition="below"
-          matTooltipClass="tooltip-multiline"
+          [ngClass]="{ 'red-border': filename.length !== 12 }"
+          class="preview-files"
         >
-          {{ file.name }}
+          <div class="preview-files__name">
+            {{ filename }}
+          </div>
+          <button
+            mat-icon-button
+            aria-label="remove_file"
+            (click)="removeFile(filename)"
+          >
+            <mat-icon>clear</mat-icon>
+          </button>
         </div>
-        <button
-          mat-icon-button
-          aria-label="remove_file"
-          (click)="removeFile(file)"
-        >
-          <mat-icon>clear</mat-icon>
-        </button>
+        <div class="error-msg" *ngIf="filename.length !== 12">
+          not match length(12)
+        </div>
+        <svg *ngIf="filename.length === 12" id="barcode_{{ filename }}"></svg>
       </div>
-    </ng-container>
-    <div class="next_btn">
-      <button
-        mat-button
-        matStepperNext
-        (click)="previewFiles()"
-        [disabled]="!selectedFiles || selectedFiles.length === 0"
-      >
-        Next
-        <mat-icon>arrow_forward</mat-icon>
-      </button>
     </div>
-  </mat-step>
-  <mat-step>
-    <ng-template matStepLabel>Preview</ng-template>
-    <h1>Preview</h1>
-    <div *ngFor="let item of previewContent" class="barcode-list">
-      <div class="filename">{{ item.filename }}</div>
-      <svg [id]="item.id"></svg>
-      <mat-divider></mat-divider>
-    </div>
-    <div>
-      <button mat-button matStepperPrevious>Back</button>
-      <button mat-button>Export</button>
-    </div>
-  </mat-step>
-</mat-stepper>
+  </div>
+</div>
