@@ -33,6 +33,52 @@
   </div>
   <input #filesInput type="file" placeholder="select" multiple="multiple" />
   <div id="export-context">
+    <div class="sign-wrapper">
+      <div>
+        <mat-label>日期</mat-label>
+        <mat-form-field floatLabel="always">
+          <input matInput type="text" [formControl]="date" maxlength="128" />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-label>時間</mat-label>
+        <mat-form-field floatLabel="always">
+          <input matInput type="text" [formControl]="time" maxlength="128" />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-label>提貨廠別</mat-label>
+        <mat-form-field floatLabel="always">
+          <input matInput type="text" maxlength="128" />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-label>提貨廠家</mat-label>
+        <mat-form-field floatLabel="always">
+          <input matInput type="text" maxlength="128" />
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-label>提貨司機姓名</mat-label>
+        <mat-form-field floatLabel="always">
+          <input matInput type="text" maxlength="128" />
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-label>聯絡電話</mat-label>
+        <mat-form-field floatLabel="always">
+          <input matInput placeholder="" type="text" maxlength="128" />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-label>庫房人員簽名</mat-label>
+        <mat-form-field floatLabel="always">
+          <input matInput placeholder="" type="text" maxlength="128" />
+        </mat-form-field>
+      </div>
+    </div>
     <div class="barcode-wrapper">
       <div class="preview-barcode" *ngFor="let filename of selectedFilename">
         <div

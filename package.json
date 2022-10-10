@@ -1,12 +1,15 @@
 {
-  "name": "g2330",
-  "version": "0.0.0",
+  "name": "barcode_generator",
+  "version": "1.0.0",
   "main": "app.js",
   "scripts": {
+    "postinstall": "electron-builder install-app-deps",
     "ng": "ng",
     "start": "ng build --base-href ./ && electron . ",
-    "build": "ng build",
+    "build": "ng build  --base-href ./",
+    "build:prod": "npm run build -- -c production",
     "watch": "ng build --watch --configuration development",
+    "electron:build": "npm run build:prod && electron-builder --publish=never",
     "test": "ng test"
   },
   "private": true,
@@ -33,6 +36,8 @@
     "@angular/compiler-cli": "^14.2.0",
     "@types/jasmine": "~4.0.0",
     "electron": "^21.1.0",
+    "electron-builder": "^23.6.0",
+    "electron-rebuild": "^3.2.9",
     "jasmine-core": "~4.3.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.1.0",

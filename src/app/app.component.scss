@@ -82,3 +82,17 @@ input[type="file"] {
   margin-left: 8px;
   color: red;
 }
+.sign-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  mat-label {
+    position: relative;
+    top: 16px;
+  }
+  mat-form-field {
+    display: block;
+    margin-top: 8px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+  }
+}

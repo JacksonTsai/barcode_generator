@@ -12,6 +12,19 @@ import jsPDF from 'jspdf';
 export class AppComponent {
   selectedFilename: string[] = [];
   inputInvoice = new FormControl('');
+  date = new FormControl(this.nowDate);
+  time = new FormControl(this.nowTime);
+
+  get nowDate() {
+    const date = new Date();
+    return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
+  }
+
+  get nowTime() {
+    const date = new Date();
+    return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  }
+
   @ViewChild('filesInput') filesInput;
 
   @HostListener('change', ['$event.target.files']) emitFiles(event: FileList) {
@@ -47,7 +60,7 @@ export class AppComponent {
     }
 
     const inputInvoiceList = this.inputInvoice.value
-      .split(/,|;|\/| |\r?\n/)
+      .split(/,|;|\/|-|_|~| |\r?\n/)
       .filter((d) => d ?? false);
     const newinputInvoice = inputInvoiceList.filter((d) =>
       this.selectedFilename.includes(d) ? false : true
@@ -75,6 +88,7 @@ export class AppComponent {
 
   formatAMPM() {
     const date = new Date();
+    const year = date.getFullYear();
     const day = date.getDate();
     const hours = date.getHours();
     const minutes = date.getMinutes();
